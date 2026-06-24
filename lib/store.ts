@@ -3,15 +3,22 @@ import { v4 as uuidv4 } from 'uuid'
 
 export type Category = 'drinks' | 'mains' | 'starters' | 'desserts' | 'snacks'
 
+export interface Ingredient {
+  name: string
+  note?: string  // e.g. "allergen", "optional", "vegan"
+}
+
 export interface MenuItem {
   id: string
   name: string
   description: string
   price: number
   category: Category
-  tag?: string // e.g. "Popular", "New", "Spicy"
+  tag?: string          // e.g. "Popular", "New", "Spicy"
   available: boolean
   emoji: string
+  imageUrl?: string     // uploaded image path or external URL
+  ingredients?: Ingredient[]
 }
 
 export interface BlogPost {
@@ -41,29 +48,107 @@ export interface Ad {
 
 const menuItems: MenuItem[] = [
   // Drinks
-  { id: uuidv4(), name: 'Signature Golden Latte', description: 'Turmeric, oat milk, honey and a touch of cinnamon — our house specialty.', price: 6.5, category: 'drinks', tag: 'Popular', available: true, emoji: '☕' },
-  { id: uuidv4(), name: 'Cold Brew Tonic', description: 'Slow-steeped 18-hour cold brew over sparkling tonic and a citrus twist.', price: 7.0, category: 'drinks', tag: 'New', available: true, emoji: '🧋' },
-  { id: uuidv4(), name: 'Berry Hibiscus Cooler', description: 'House-brewed hibiscus tea with muddled mixed berries and fresh mint.', price: 5.5, category: 'drinks', available: true, emoji: '🍹' },
-  { id: uuidv4(), name: 'Matcha Ceremony', description: 'Ceremonial grade matcha whisked to perfection, served hot or iced.', price: 6.0, category: 'drinks', tag: 'Popular', available: true, emoji: '🍵' },
-  { id: uuidv4(), name: 'Vanilla Cloud Espresso', description: 'Double shot espresso with whipped vanilla cream and chocolate dust.', price: 7.5, category: 'drinks', available: true, emoji: '☕' },
-  { id: uuidv4(), name: 'Fresh Pressed Citrus', description: 'Seasonal oranges, grapefruit and a squeeze of lemon — pressed daily.', price: 5.0, category: 'drinks', available: true, emoji: '🍊' },
+  {
+    id: uuidv4(), name: 'Signature Golden Latte', description: 'Turmeric, oat milk, honey and a touch of cinnamon — our house specialty.',
+    price: 6.5, category: 'drinks', tag: 'Popular', available: true, emoji: '☕',
+    ingredients: [
+      { name: 'Turmeric' }, { name: 'Oat Milk', note: 'vegan' }, { name: 'Wildflower Honey' }, { name: 'Cinnamon' },
+    ],
+  },
+  {
+    id: uuidv4(), name: 'Cold Brew Tonic', description: 'Slow-steeped 18-hour cold brew over sparkling tonic and a citrus twist.',
+    price: 7.0, category: 'drinks', tag: 'New', available: true, emoji: '🧋',
+    ingredients: [{ name: 'Cold Brew Coffee' }, { name: 'Sparkling Tonic' }, { name: 'Citrus Twist' }],
+  },
+  {
+    id: uuidv4(), name: 'Berry Hibiscus Cooler', description: 'House-brewed hibiscus tea with muddled mixed berries and fresh mint.',
+    price: 5.5, category: 'drinks', available: true, emoji: '🍹',
+    ingredients: [{ name: 'Hibiscus Tea' }, { name: 'Mixed Berries' }, { name: 'Fresh Mint' }],
+  },
+  {
+    id: uuidv4(), name: 'Matcha Ceremony', description: 'Ceremonial grade matcha whisked to perfection, served hot or iced.',
+    price: 6.0, category: 'drinks', tag: 'Popular', available: true, emoji: '🍵',
+    ingredients: [{ name: 'Ceremonial Matcha' }, { name: 'Oat Milk', note: 'vegan' }],
+  },
+  {
+    id: uuidv4(), name: 'Vanilla Cloud Espresso', description: 'Double shot espresso with whipped vanilla cream and chocolate dust.',
+    price: 7.5, category: 'drinks', available: true, emoji: '☕',
+    ingredients: [{ name: 'Double Espresso' }, { name: 'Vanilla Cream', note: 'contains dairy' }, { name: 'Chocolate Dust' }],
+  },
+  {
+    id: uuidv4(), name: 'Fresh Pressed Citrus', description: 'Seasonal oranges, grapefruit and a squeeze of lemon — pressed daily.',
+    price: 5.0, category: 'drinks', available: true, emoji: '🍊',
+    ingredients: [{ name: 'Fresh Orange' }, { name: 'Grapefruit' }, { name: 'Lemon' }],
+  },
   // Starters
-  { id: uuidv4(), name: 'Roasted Tomato Bruschetta', description: 'Slow-roasted vine tomatoes, whipped ricotta, basil oil on sourdough.', price: 9.0, category: 'starters', tag: 'Popular', available: true, emoji: '🍞' },
-  { id: uuidv4(), name: 'Crispy Calamari', description: 'Lightly dusted squid rings, fried golden, with house aioli and lemon.', price: 12.0, category: 'starters', available: true, emoji: '🦑' },
-  { id: uuidv4(), name: 'Smoked Salmon Blinis', description: 'House-cured salmon, crème fraîche and dill on buckwheat blinis.', price: 13.5, category: 'starters', tag: 'New', available: true, emoji: '🐟' },
+  {
+    id: uuidv4(), name: 'Roasted Tomato Bruschetta', description: 'Slow-roasted vine tomatoes, whipped ricotta, basil oil on sourdough.',
+    price: 9.0, category: 'starters', tag: 'Popular', available: true, emoji: '🍞',
+    ingredients: [{ name: 'Vine Tomatoes' }, { name: 'Ricotta', note: 'contains dairy' }, { name: 'Basil Oil' }, { name: 'Sourdough', note: 'contains gluten' }],
+  },
+  {
+    id: uuidv4(), name: 'Crispy Calamari', description: 'Lightly dusted squid rings, fried golden, with house aioli and lemon.',
+    price: 12.0, category: 'starters', available: true, emoji: '🦑',
+    ingredients: [{ name: 'Squid Rings' }, { name: 'House Aioli', note: 'contains egg' }, { name: 'Lemon' }],
+  },
+  {
+    id: uuidv4(), name: 'Smoked Salmon Blinis', description: 'House-cured salmon, crème fraîche and dill on buckwheat blinis.',
+    price: 13.5, category: 'starters', tag: 'New', available: true, emoji: '🐟',
+    ingredients: [{ name: 'House-cured Salmon' }, { name: 'Crème Fraîche', note: 'contains dairy' }, { name: 'Fresh Dill' }, { name: 'Buckwheat Blinis', note: 'contains gluten' }],
+  },
   // Mains
-  { id: uuidv4(), name: 'Pan-Seared Sea Bass', description: 'Crispy skin sea bass, saffron risotto, wilted spinach and beurre blanc.', price: 28.0, category: 'mains', tag: 'Chef\'s Pick', available: true, emoji: '🐟' },
-  { id: uuidv4(), name: 'Slow-Braised Short Rib', description: '12-hour braised beef rib, truffle mash, roasted carrots and jus.', price: 32.0, category: 'mains', tag: 'Popular', available: true, emoji: '🥩' },
-  { id: uuidv4(), name: 'Wild Mushroom Risotto', description: 'Arborio rice with porcini, oyster and shiitake mushrooms, aged parmesan.', price: 22.0, category: 'mains', available: true, emoji: '🍄' },
-  { id: uuidv4(), name: 'Grilled Chicken Supreme', description: 'Free-range chicken, herb butter, roasted roots and rosemary jus.', price: 24.0, category: 'mains', available: true, emoji: '🍗' },
-  { id: uuidv4(), name: 'Cupstore Wagyu Burger', description: 'Wagyu patty, aged cheddar, caramelised onions and house-made brioche.', price: 26.0, category: 'mains', tag: 'Popular', available: true, emoji: '🍔' },
+  {
+    id: uuidv4(), name: 'Pan-Seared Sea Bass', description: 'Crispy skin sea bass, saffron risotto, wilted spinach and beurre blanc.',
+    price: 28.0, category: 'mains', tag: "Chef's Pick", available: true, emoji: '🐟',
+    ingredients: [{ name: 'Sea Bass Fillet' }, { name: 'Saffron Risotto', note: 'contains dairy' }, { name: 'Wilted Spinach' }, { name: 'Beurre Blanc', note: 'contains dairy' }],
+  },
+  {
+    id: uuidv4(), name: 'Slow-Braised Short Rib', description: '12-hour braised beef rib, truffle mash, roasted carrots and jus.',
+    price: 32.0, category: 'mains', tag: 'Popular', available: true, emoji: '🥩',
+    ingredients: [{ name: 'Beef Short Rib' }, { name: 'Truffle Mash', note: 'contains dairy' }, { name: 'Roasted Carrots' }, { name: 'Red Wine Jus' }],
+  },
+  {
+    id: uuidv4(), name: 'Wild Mushroom Risotto', description: 'Arborio rice with porcini, oyster and shiitake mushrooms, aged parmesan.',
+    price: 22.0, category: 'mains', available: true, emoji: '🍄',
+    ingredients: [{ name: 'Arborio Rice' }, { name: 'Porcini Mushrooms' }, { name: 'Oyster Mushrooms' }, { name: 'Shiitake Mushrooms' }, { name: 'Aged Parmesan', note: 'contains dairy' }],
+  },
+  {
+    id: uuidv4(), name: 'Grilled Chicken Supreme', description: 'Free-range chicken, herb butter, roasted roots and rosemary jus.',
+    price: 24.0, category: 'mains', available: true, emoji: '🍗',
+    ingredients: [{ name: 'Free-range Chicken' }, { name: 'Herb Butter', note: 'contains dairy' }, { name: 'Roasted Root Vegetables' }, { name: 'Rosemary Jus' }],
+  },
+  {
+    id: uuidv4(), name: 'Cupstore Wagyu Burger', description: 'Wagyu patty, aged cheddar, caramelised onions and house-made brioche.',
+    price: 26.0, category: 'mains', tag: 'Popular', available: true, emoji: '🍔',
+    ingredients: [{ name: 'Wagyu Beef Patty' }, { name: 'Aged Cheddar', note: 'contains dairy' }, { name: 'Caramelised Onions' }, { name: 'Brioche Bun', note: 'contains gluten' }],
+  },
   // Snacks
-  { id: uuidv4(), name: 'Truffle Parmesan Fries', description: 'Double-cooked fries tossed in truffle oil, parmesan and fresh herbs.', price: 8.0, category: 'snacks', tag: 'Popular', available: true, emoji: '🍟' },
-  { id: uuidv4(), name: 'Spiced Nuts Mix', description: 'House-roasted almonds, cashews and pecans with smoked paprika glaze.', price: 5.5, category: 'snacks', available: true, emoji: '🥜' },
+  {
+    id: uuidv4(), name: 'Truffle Parmesan Fries', description: 'Double-cooked fries tossed in truffle oil, parmesan and fresh herbs.',
+    price: 8.0, category: 'snacks', tag: 'Popular', available: true, emoji: '🍟',
+    ingredients: [{ name: 'Potato Fries' }, { name: 'Truffle Oil' }, { name: 'Parmesan', note: 'contains dairy' }, { name: 'Fresh Herbs' }],
+  },
+  {
+    id: uuidv4(), name: 'Spiced Nuts Mix', description: 'House-roasted almonds, cashews and pecans with smoked paprika glaze.',
+    price: 5.5, category: 'snacks', available: true, emoji: '🥜',
+    ingredients: [{ name: 'Almonds', note: 'tree nut' }, { name: 'Cashews', note: 'tree nut' }, { name: 'Pecans', note: 'tree nut' }, { name: 'Smoked Paprika' }],
+  },
   // Desserts
-  { id: uuidv4(), name: 'Warm Chocolate Fondant', description: 'Dark Valrhona chocolate, molten centre, served with vanilla bean ice cream.', price: 11.0, category: 'desserts', tag: 'Popular', available: true, emoji: '🍫' },
-  { id: uuidv4(), name: 'Lemon Tart Brûlée', description: 'Classic pâtisserie lemon curd tart with a torched crème brûlée top.', price: 9.5, category: 'desserts', tag: 'New', available: true, emoji: '🍋' },
-  { id: uuidv4(), name: 'Seasonal Panna Cotta', description: 'Delicate vanilla panna cotta with a rotating seasonal fruit compote.', price: 8.5, category: 'desserts', available: true, emoji: '🍮' },
+  {
+    id: uuidv4(), name: 'Warm Chocolate Fondant', description: 'Dark Valrhona chocolate, molten centre, served with vanilla bean ice cream.',
+    price: 11.0, category: 'desserts', tag: 'Popular', available: true, emoji: '🍫',
+    ingredients: [{ name: 'Valrhona Dark Chocolate' }, { name: 'Salted Butter', note: 'contains dairy' }, { name: 'Eggs', note: 'contains egg' }, { name: 'Vanilla Ice Cream', note: 'contains dairy' }],
+  },
+  {
+    id: uuidv4(), name: 'Lemon Tart Brûlée', description: 'Classic pâtisserie lemon curd tart with a torched crème brûlée top.',
+    price: 9.5, category: 'desserts', tag: 'New', available: true, emoji: '🍋',
+    ingredients: [{ name: 'Lemon Curd' }, { name: 'Tart Shell', note: 'contains gluten' }, { name: 'Eggs', note: 'contains egg' }, { name: 'Cream', note: 'contains dairy' }],
+  },
+  {
+    id: uuidv4(), name: 'Seasonal Panna Cotta', description: 'Delicate vanilla panna cotta with a rotating seasonal fruit compote.',
+    price: 8.5, category: 'desserts', available: true, emoji: '🍮',
+    ingredients: [{ name: 'Double Cream', note: 'contains dairy' }, { name: 'Vanilla Bean' }, { name: 'Gelatin' }, { name: 'Seasonal Fruit Compote' }],
+  },
 ]
 
 const blogPosts: BlogPost[] = [
@@ -71,7 +156,7 @@ const blogPosts: BlogPost[] = [
     id: uuidv4(),
     title: 'The Story Behind Our Signature Golden Latte',
     slug: 'story-behind-golden-latte',
-    excerpt: 'What started as a late-night experiment in our kitchen became the drink that defines Cupstore. Here\'s how the Golden Latte was born.',
+    excerpt: "What started as a late-night experiment in our kitchen became the drink that defines Cupstore. Here's how the Golden Latte was born.",
     content: `What started as a late-night experiment in our kitchen became the drink that defines Cupstore. Three years ago, our head barista Maya was closing up and decided to blend her grandmother's turmeric remedy with our single-origin oat milk. She added a drizzle of wildflower honey and a pinch of cinnamon — and something magical happened.
 
 The next morning she made it for the team. Nobody said a word. They just kept drinking. By lunchtime, it was on the specials board. By the end of the week, regulars were asking for "that golden thing." A month later, it was officially the Signature Golden Latte.
@@ -111,7 +196,7 @@ That uncertainty is intentional. It keeps us present, keeps our suppliers engage
     id: uuidv4(),
     title: 'A Weekend Morning at Cupstore: What to Order',
     slug: 'weekend-morning-guide',
-    excerpt: 'Saturday mornings deserve a ritual. Here\'s our staff\'s unofficial guide to building the perfect Cupstore weekend breakfast.',
+    excerpt: "Saturday mornings deserve a ritual. Here's our staff's unofficial guide to building the perfect Cupstore weekend breakfast.",
     content: `Saturday morning at Cupstore is its own kind of magic. The light comes in through the east windows at 9am and hits the bar just right. The playlist is slower. The kitchen is in full swing.
 
 If you're coming in on a weekend morning — here's what the team actually eats:
@@ -165,7 +250,7 @@ const ads: Ad[] = [
   },
 ]
 
-// ─── Store Access ────────────────────────────────────────────────────────────
+// ─── Store Access ─────────────────────────────────────────────────────────────
 
 let _menuItems = [...menuItems]
 let _blogPosts = [...blogPosts]

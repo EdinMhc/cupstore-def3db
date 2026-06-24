@@ -19,6 +19,8 @@ export async function POST(req: NextRequest) {
     tag: body.tag || undefined,
     available: body.available ?? true,
     emoji: body.emoji || '🍽️',
+    imageUrl: body.imageUrl || undefined,
+    ingredients: body.ingredients || [],
   })
   return NextResponse.json(item, { status: 201 })
 }
