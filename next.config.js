@@ -4,9 +4,9 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
-    // Allow unoptimised local uploads served from /public
-    unoptimized: false,
+    unoptimized: true,
   },
+  serverExternalPackages: ['better-sqlite3'],
 }
 
 module.exports = nextConfig

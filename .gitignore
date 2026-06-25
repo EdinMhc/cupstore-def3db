@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# SQLite database files (persisted on Railway volume, not in repo)
+*.db
+*.db-shm
+*.db-wal
+
+# Uploaded images (persisted on Railway volume, not in repo)
+public/uploads/
+
+# Environment files
+.env
+.env.local
+.env*.local
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { store } from '@/lib/store'
+import { getDb, mapAd, DbAd } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
@@ -7,23 +7,35 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const updated = store.updateAd(params.id, {
-    title: body.title,
-    subtitle: body.subtitle,
-    cta: body.cta,
-    badge: body.badge,
-    bgColor: body.bgColor,
-    textColor: body.textColor,
-    active: body.active,
-  })
-  if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  return NextResponse.json(updated)
+  const db = getDb()
+
+  const existing = db.prepare('SELECT * FROM ads WHERE id = ?').get(params.id)
+  if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  db.prepare(`
+    UPDATE ads
+    SET title = ?, subtitle = ?, cta = ?, badge = ?, bg_color = ?, text_color = ?, active = ?
+    WHERE id = ?
+  `).run(
+    body.title,
+    body.subtitle ?? '',
+    body.cta ?? '',
+    body.badge || null,
+    body.bgColor || '#1A1208',
+    body.textColor || '#FDF6EC',
+    body.active !== false ? 1 : 0,
+    params.id,
+  )
+
+  const row = db.prepare('SELECT * FROM ads WHERE id = ?').get(params.id) as DbAd
+  return NextResponse.json(mapAd(row))
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getSession()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  store.deleteAd(params.id)
+  const db = getDb()
+  db.prepare('DELETE FROM ads WHERE id = ?').run(params.id)
   return NextResponse.json({ success: true })
 }
