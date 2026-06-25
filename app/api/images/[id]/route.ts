@@ -18,7 +18,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
-  return new NextResponse(row.data, {
+  return new NextResponse(new Uint8Array(row.data), {
     status: 200,
     headers: {
       'Content-Type': row.mime,

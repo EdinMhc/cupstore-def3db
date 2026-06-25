@@ -6,7 +6,9 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  serverExternalPackages: ['better-sqlite3'],
+  experimental: {
+    serverComponentsExternalPackages: ['better-sqlite3'],
+  },
 }
 
 module.exports = nextConfig
