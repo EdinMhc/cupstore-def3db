@@ -130,7 +130,7 @@ function ImageUploader({
         <input
           value={preview}
           onChange={e => onUploaded(e.target.value)}
-          placeholder="…or paste an image URL"
+          placeholder="…or paste an external image URL"
           style={{ ...inputStyle, fontSize: 12 }}
         />
       </div>

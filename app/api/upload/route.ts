@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
+import { getDb } from '@/lib/db'
+import { v4 as uuidv4 } from 'uuid'
+
+export const runtime = 'nodejs'
 
 export async function POST(req: NextRequest) {
   const session = await getSession()
@@ -27,15 +29,14 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Sanitise filename and make unique
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-    const safeName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const id = uuidv4()
+    const db = getDb()
+    db.prepare(
+      'INSERT INTO images (id, mime, data, created_at) VALUES (?, ?, ?, ?)'
+    ).run(id, file.type, buffer, new Date().toISOString())
 
-    const uploadDir = join(process.cwd(), 'public', 'uploads')
-    await mkdir(uploadDir, { recursive: true })
-    await writeFile(join(uploadDir, safeName), buffer)
-
-    return NextResponse.json({ url: `/uploads/${safeName}` })
+    // Served back through /api/images/[id]
+    return NextResponse.json({ url: `/api/images/${id}` })
   } catch (err) {
     console.error('Upload error:', err)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })

@@ -72,6 +72,13 @@ function migrate(db: Database.Database) {
       text_color TEXT NOT NULL DEFAULT '#FDF6EC',
       active     INTEGER NOT NULL DEFAULT 1
     );
+
+    CREATE TABLE IF NOT EXISTS images (
+      id           TEXT PRIMARY KEY,
+      mime         TEXT NOT NULL,
+      data         BLOB NOT NULL,
+      created_at   TEXT NOT NULL
+    );
   `)
 
   seedIfEmpty(db)
