@@ -36,8 +36,11 @@ function ImageUploader({
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
-  const [preview, setPreview] = useState(current)
   const [error, setError] = useState('')
+
+  // Always derive the displayed preview from the `current` prop (controlled).
+  // The parent form owns the truth; we just call onUploaded to update it.
+  const preview = current
 
   async function handleFile(file: File) {
     setError('')
@@ -48,7 +51,6 @@ function ImageUploader({
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Upload failed'); return }
-      setPreview(data.url)
       onUploaded(data.url)
     } catch {
       setError('Upload failed')
@@ -65,7 +67,11 @@ function ImageUploader({
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
-    if (file) handleFile(file)
+    if (file) {
+      handleFile(file)
+      // reset input so the same file can be re-selected if needed
+      e.target.value = ''
+    }
   }
 
   return (
@@ -79,17 +85,24 @@ function ImageUploader({
           border: '2px dashed var(--border-color)', borderRadius: 14, overflow: 'hidden',
           cursor: uploading ? 'wait' : 'pointer', position: 'relative',
           background: '#FAFAF8', transition: 'border-color 0.2s',
-          minHeight: 140, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          minHeight: 160, display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
         onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--brand-primary)')}
         onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border-color)')}
       >
-        {preview ? (
+        {uploading ? (
+          <div style={{ textAlign: 'center', padding: 24, color: 'var(--brand-muted)' }}>
+            <div style={{ fontSize: 36, marginBottom: 8 }}>⏳</div>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>Uploading…</div>
+          </div>
+        ) : preview ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={preview} alt="preview"
-              style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }}
+              src={preview}
+              alt={preview}
+              style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
+              onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
             />
             <div style={{
               position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)',
@@ -99,30 +112,24 @@ function ImageUploader({
               onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
               onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
             >
-              <span style={{ color: '#fff', fontWeight: 600, fontSize: 13 }}>
-                {uploading ? '⏳ Uploading…' : '📷 Change Photo'}
-              </span>
+              <span style={{ color: '#fff', fontWeight: 600, fontSize: 13 }}>📷 Change Photo</span>
             </div>
           </>
         ) : (
           <div style={{ textAlign: 'center', padding: 24, color: 'var(--brand-muted)' }}>
-            {uploading ? (
-              <><div style={{ fontSize: 30, marginBottom: 8 }}>⏳</div><div style={{ fontSize: 13 }}>Uploading…</div></>
-            ) : (
-              <><div style={{ fontSize: 36, marginBottom: 8 }}>📷</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand-dark)' }}>Click or drag to upload</div>
-                <div style={{ fontSize: 12, marginTop: 4 }}>JPEG, PNG, WebP · max 5 MB</div></>
-            )}
+            <div style={{ fontSize: 36, marginBottom: 8 }}>📷</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand-dark)' }}>Click or drag to upload</div>
+            <div style={{ fontSize: 12, marginTop: 4 }}>JPEG, PNG, WebP · max 5 MB</div>
           </div>
         )}
-        <input ref={inputRef} type="file" accept="image/*" onChange={handleChange} style={{ display: 'none' }} />
+        <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={handleChange} style={{ display: 'none' }} />
       </div>
 
       {/* Manual URL fallback */}
       <div style={{ marginTop: 8 }}>
         <input
           value={preview}
-          onChange={e => { setPreview(e.target.value); onUploaded(e.target.value) }}
+          onChange={e => onUploaded(e.target.value)}
           placeholder="…or paste an image URL"
           style={{ ...inputStyle, fontSize: 12 }}
         />
